@@ -1,0 +1,11 @@
+- Implement search
+  - query syntax
+    - Book/Chapter/Verse combos
+        - Fuzzy book search
+    - Text search
+        - Fuzzy text search
+  - shift shift
+- Tabs
+- Book/Chapter browser
+- Shortcuts
+  - Ctrl click
