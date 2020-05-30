@@ -11,8 +11,20 @@
   padding: 20px;
 }
 
+.Verse {
+  font-size: small;
+}
+
 .Context {
   color: grey;
+}
+
+.ContextSetting {
+  margin-left: 20px;
+}
+
+.ContextSetting Select{
+  margin-left: 10px;
 }
 
 .Search {

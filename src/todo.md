@@ -9,3 +9,4 @@
 - Book/Chapter browser
 - Shortcuts
   - Ctrl click
+- How do deal with verse positioning
