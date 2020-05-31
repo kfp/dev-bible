@@ -1,10 +1,11 @@
 import React from 'react';
-import {range, rangeRight} from 'lodash';
+import {range, rangeRight, find} from 'lodash';
 import './App.css'
 
-var books = require('./books.json');
-var bible = require('./t_kjv.json').resultset.row.map((v) => {
-  return {bookNum: v.field[1], book: books[v.field[1]-1], chapter: v.field[2], verse:v.field[3], text:v.field[4]};
+const books = require('./books.json');
+var index = 0;
+const bible = require('./t_kjv.json').resultset.row.map((v) => {
+  return {index: index++, bookNum: v.field[1], book: books[v.field[1]-1], chapter: v.field[2], verse:v.field[3], text:v.field[4]};
   }
 );
 
@@ -67,9 +68,19 @@ class Page extends React.PureComponent{
   }
 
   doSearch(){
-    const text = this.props.searchText;
+    const text = this.state.searchText;
+    if(!text){
+      this.setState({verseNum: randomVerseNum()});
+      return;
+    }
 
-    this.setState({verseNum: randomVerseNum()});
+    const searches = [...text.matchAll(/((?:\d\s*)?\w+)\s+(\d+):(\d+(?:-\d+)?)\s*/g)];
+    if(searches.length > 0){
+      let verse = find(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
+      if(verse){
+        this.setState({verseNum: verse.index});
+      }
+    }
   }
 
   render(){
@@ -77,7 +88,7 @@ class Page extends React.PureComponent{
     return (
       <div className="App">
         <div className="Settings">
-        <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} onChange={this.handleSearchChange}/>
+        <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} onChange={this.handleSearchChange} onSubmit={this.handleSearchChange}/>
         <span className="ContextSetting">
           Context:
           <select value={this.state.versesBefore} onChange={this.handleContextChange}>

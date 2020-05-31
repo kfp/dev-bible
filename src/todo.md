@@ -1,3 +1,4 @@
+# Features
 - Implement search
   - query syntax
     - Book/Chapter/Verse combos
@@ -10,3 +11,6 @@
 - Shortcuts
   - Ctrl click
 - How do deal with verse positioning
+
+# Bugs
+- Context can be out of bounds
