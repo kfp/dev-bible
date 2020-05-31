@@ -1,9 +1,9 @@
 import React from 'react';
-import {range, rangeRight, find} from 'lodash';
+import {range, rangeRight, findIndex} from 'lodash';
 import './App.css'
 
+var index=0;
 const books = require('./books.json');
-var index = 0;
 const bible = require('./t_kjv.json').resultset.row.map((v) => {
   return {index: index++, bookNum: v.field[1], book: books[v.field[1]-1], chapter: v.field[2], verse:v.field[3], text:v.field[4]};
   }
@@ -75,11 +75,14 @@ class Page extends React.PureComponent{
     }
 
     const searches = [...text.matchAll(/((?:\d\s*)?\w+)\s+(\d+):(\d+(?:-\d+)?)\s*/g)];
+    var verse;
     if(searches.length > 0){
-      let verse = find(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
-      if(verse){
-        this.setState({verseNum: verse.index});
-      }
+      verse = findIndex(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
+    } else {
+      verse = findIndex(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
+    }
+    if(verse){
+      this.setState({verseNum: verse});
     }
   }
 
