@@ -1,6 +1,7 @@
 import React from 'react';
 import {range, rangeRight, findIndex} from 'lodash';
 import './App.css'
+import Mousetrap from 'mousetrap'
 
 var index=0;
 const books = require('./books.json');
@@ -30,11 +31,11 @@ class VerseGroup extends React.PureComponent{
     return(
     <div>
       <h1>{verse.book} {verse.chapter}:{verse.verse}</h1>
-      {range(verseNum - versesBefore, verseNum).map((n) =>
+      {range(Math.max(0, verseNum - versesBefore), verseNum).map((n) =>
         <Verse verse={bible[n]} isContext={true}/>
       )}
       <Verse verse={verse}/>
-      {rangeRight(verseNum+versesAfter, verseNum).map((n) =>
+      {rangeRight(Math.min(bible.length, verseNum+versesAfter), verseNum).map((n) =>
         <Verse verse={bible[n]} isContext={true}/>
       )}
     </div>
@@ -53,12 +54,13 @@ class Page extends React.PureComponent{
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleContextChange = this.handleContextChange.bind(this);
+    this.searchRef = React.createRef();
   }
 
 
   handleSearchChange(event){
     this.setState({searchText: event.target.value})
-    this.doSearch()
+    this.doSearch(event.target.value)
   }
 
   handleContextChange(event){
@@ -67,8 +69,7 @@ class Page extends React.PureComponent{
     this.setState({versesAfter: newVal})
   }
 
-  doSearch(){
-    const text = this.state.searchText;
+  doSearch(text){
     if(!text){
       this.setState({verseNum: randomVerseNum()});
       return;
@@ -81,9 +82,17 @@ class Page extends React.PureComponent{
     } else {
       verse = findIndex(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
     }
-    if(verse){
+    if(verse>=0){
       this.setState({verseNum: verse});
     }
+  }
+
+  componentDidMount() {
+    Mousetrap.bind("shift shift", () => this.searchRef.current.select(), 'keyup');
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind("shift shift");
   }
 
   render(){
@@ -91,7 +100,8 @@ class Page extends React.PureComponent{
     return (
       <div className="App">
         <div className="Settings">
-        <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} onChange={this.handleSearchChange} onSubmit={this.handleSearchChange}/>
+        <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} 
+          onChange={this.handleSearchChange} ref={this.searchRef}/>
         <span className="ContextSetting">
           Context:
           <select value={this.state.versesBefore} onChange={this.handleContextChange}>
