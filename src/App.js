@@ -2,16 +2,23 @@ import React from 'react';
 import {range, rangeRight, findIndex} from 'lodash';
 import './App.css'
 import Mousetrap from 'mousetrap'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+ 
 
 var index=0;
 const books = require('./books.json');
 const bible = require('./t_kjv.json').resultset.row.map((v) => {
-  return {index: index++, bookNum: v.field[1], book: books[v.field[1]-1], chapter: v.field[2], verse:v.field[3], text:v.field[4]};
+  return {index: index++, bookNum: v.field[1], book: books[v.field[1]-1], chapter: v.field[2], verse:v.field[3], text:v.field[4], tokenized:tokenize(v.field[4])};
   }
 );
 
 function randomVerseNum(){
   return Math.floor(Math.random() * bible.length)
+}
+
+function tokenize(text){
+  return text;
 }
 
 class Verse extends React.PureComponent{
@@ -29,16 +36,16 @@ class VerseGroup extends React.PureComponent{
     const verse = bible[verseNum];
 
     return(
-    <div>
-      <h1>{verse.book} {verse.chapter}:{verse.verse}</h1>
-      {range(Math.max(0, verseNum - versesBefore), verseNum).map((n) =>
-        <Verse verse={bible[n]} isContext={true}/>
-      )}
-      <Verse verse={verse}/>
-      {rangeRight(Math.min(bible.length, verseNum+versesAfter), verseNum).map((n) =>
-        <Verse verse={bible[n]} isContext={true}/>
-      )}
-    </div>
+      <div>
+        <h1>{verse.book} {verse.chapter}:{verse.verse}</h1>
+        {range(Math.max(0, verseNum - versesBefore), verseNum).map((n, i) =>
+          <Verse verse={bible[n]} isContext={true} key={i}/>
+        )}
+        <Verse verse={verse}/>
+        {rangeRight(Math.min(bible.length, verseNum+versesAfter), verseNum).map((n, i) =>
+          <Verse verse={bible[n]} isContext={true} key={i}/>
+        )}
+      </div>
     )
   }
 }
@@ -48,7 +55,7 @@ class Page extends React.PureComponent{
     super(props);
     this.state = {
       searchText: '', 
-      verseNum: randomVerseNum(),
+      verseNums: [randomVerseNum()],
       versesBefore: 1,
       versesAfter: 1,
     };
@@ -70,11 +77,6 @@ class Page extends React.PureComponent{
   }
 
   doSearch(text){
-    if(!text){
-      this.setState({verseNum: randomVerseNum()});
-      return;
-    }
-
     const searches = [...text.matchAll(/((?:\d\s*)?\w+)\s+(\d+):(\d+(?:-\d+)?)\s*/g)];
     var verse;
     if(searches.length > 0){
@@ -82,8 +84,8 @@ class Page extends React.PureComponent{
     } else {
       verse = findIndex(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
     }
-    if(verse>=0){
-      this.setState({verseNum: verse});
+    if(verse>=0 && !this.state.verseNums.includes(verse)){
+      this.setState({verseNums: [...this.state.verseNums, verse]});
     }
   }
 
@@ -96,7 +98,7 @@ class Page extends React.PureComponent{
   }
 
   render(){
-    const {searchText, verseNum, versesBefore, versesAfter} = this.state;
+    const {searchText, verseNums, versesBefore, versesAfter} = this.state;
     return (
       <div className="App">
         <div className="Settings">
@@ -111,7 +113,16 @@ class Page extends React.PureComponent{
           </select>
         </span>
         </div>
-        <VerseGroup versesBefore={versesBefore} versesAfter={versesAfter} verseNum={verseNum}/>
+          <Tabs>
+            <TabList>
+              {verseNums.map((verseNum, i)=>
+                <Tab key={i}>{`${bible[verseNum].book} ${bible[verseNum].chapter}:${bible[verseNum].verse}`}</Tab>
+              )}
+            </TabList>
+            {verseNums.map((verseNum, i)=>
+              <TabPanel key={i}><VerseGroup versesBefore={versesBefore} versesAfter={versesAfter} verseNum={verseNum} key={i}/></TabPanel>
+            )}
+          </Tabs>
       </div>
     )
   }
