@@ -1,5 +1,5 @@
 import React from 'react';
-import {range, rangeRight, findIndex} from 'lodash';
+import {range, rangeRight, filter, take} from 'lodash';
 import './App.css'
 import Mousetrap from 'mousetrap'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -50,6 +50,36 @@ class VerseGroup extends React.PureComponent{
   }
 }
 
+class SearchResults extends React.PureComponent{
+  constructor(props){
+    super(props);
+    this.state = {
+      shouldDisplay: false,
+    }
+  }
+
+  componentDidMount() {
+    Mousetrap.bind("esc", () => this.searchRef.current.select(), 'keyup');
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind("esc");
+  }
+  render(){
+    const {results, keywords} = this.props;
+
+    return(
+      <div className="SearchResults">
+        <ul>
+          {results.map((v, i) =>
+            <li key={i} verseNum={v.index}>{v.book} {v.chapter}:{v.verse}</li>
+          )}
+        </ul>
+      </div>
+    )
+  }
+}
+
 class Page extends React.PureComponent{
   constructor(props) {
     super(props);
@@ -58,6 +88,7 @@ class Page extends React.PureComponent{
       verseNums: [randomVerseNum()],
       versesBefore: 1,
       versesAfter: 1,
+      results: []
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleContextChange = this.handleContextChange.bind(this);
@@ -78,15 +109,14 @@ class Page extends React.PureComponent{
 
   doSearch(text){
     const searches = [...text.matchAll(/((?:\d\s*)?\w+)\s+(\d+):(\d+(?:-\d+)?)\s*/g)];
-    var verse;
+    var verses = [];
     if(searches.length > 0){
-      verse = findIndex(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
+      verses = filter(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
     } else {
-      verse = findIndex(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
+      verses = filter(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
     }
-    if(verse>=0 && !this.state.verseNums.includes(verse)){
-      this.setState({verseNums: [...this.state.verseNums, verse]});
-    }
+      // this.setState({verseNums: [...this.state.verseNums, verse]});
+    this.setState({results: take(verses, 5)})
   }
 
   componentDidMount() {
@@ -98,12 +128,13 @@ class Page extends React.PureComponent{
   }
 
   render(){
-    const {searchText, verseNums, versesBefore, versesAfter} = this.state;
+    const {searchText, verseNums, versesBefore, versesAfter, results} = this.state;
     return (
       <div className="App">
         <div className="Settings">
         <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} 
           onChange={this.handleSearchChange} ref={this.searchRef}/>
+          <SearchResults results={results}/>
         <span className="ContextSetting">
           Context:
           <select value={this.state.versesBefore} onChange={this.handleContextChange}>

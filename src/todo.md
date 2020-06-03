@@ -13,4 +13,4 @@
 - How do deal with verse positioning
 
 # Bugs
-- Context can be out of bounds
+- [x] Context can be out of bounds
