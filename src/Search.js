@@ -2,7 +2,7 @@ import React from "react";
 import { filter, take } from "lodash";
 import "./App.css";
 import Mousetrap from "mousetrap";
-import ReactVirtualizedTable from "./ReactVirtualizedTable.js";
+import ReactVirtualizedList from "./ReactVirtualizedList.js";
 
 class SearchResults extends React.PureComponent {
   constructor(props) {
@@ -75,32 +75,7 @@ class Search extends React.PureComponent {
   render() {
     const { searchText, results } = this.state;
     const searchId = "searchId";
-    const rowConfig = [
-      {
-        //   width: 100%,
-        label: "Book",
-        dataKey: "book",
-        numeric: false
-      },
-      {
-        //   width: 100%,
-        label: "Chapter",
-        dataKey: "chapter",
-        numeric: false
-      },
-      {
-        //   width: 100%,
-        label: "Verse",
-        dataKey: "verse",
-        numeric: false
-      },
-      {
-        //   width: 100%,
-        label: "Text",
-        dataKey: "text",
-        numeric: false
-      }
-    ];
+    const rowRenderer = (v) => `${v.book} ${v.chapter}:${v.verse} ${v.text}`;
 
     return (
       <div>
@@ -115,7 +90,7 @@ class Search extends React.PureComponent {
           ref={this.searchRef}
         />
         {searchId === document.activeElement.id && results.length > 0 ? (
-          <ReactVirtualizedTable rows={results} rowConfig={rowConfig} />
+          <ReactVirtualizedList rows={results} rowRenderer={rowRenderer} />
         ) : null}
       </div>
     );

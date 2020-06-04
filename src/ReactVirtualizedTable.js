@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
 import Paper from "@material-ui/core/Paper";
 import { AutoSizer, Column, Table } from "react-virtualized";
@@ -34,6 +34,12 @@ const styles = (theme) => ({
   noClick: {
     cursor: "initial"
   }
+});
+
+const darkTheme = createMuiTheme({
+  palette: {
+    type: 'dark',
+  },
 });
 
 class MuiVirtualizedTable extends React.PureComponent {
@@ -143,9 +149,11 @@ class ReactVirtualizedTable extends React.PureComponent {
     const { rows, rowConfig } = this.props;
 
     return (
-      <Paper style={{ height: 300, width: "100%" }}>
-        <VirtualizedTable rowCount={rows.length} rowGetter={({ index }) => rows[index]} columns={rowConfig} />
-      </Paper>
+      <ThemeProvider theme={darkTheme}>
+        <Paper style={{ height: 300, width: "100%" }}>
+          <VirtualizedTable rowCount={rows.length} rowGetter={({ index }) => rows[index]} columns={rowConfig} />
+        </Paper>
+      </ThemeProvider>
     );
   }
 }
