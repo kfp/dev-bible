@@ -28,42 +28,6 @@
   margin-left: 10px;
 }
 
-.Search {
-  width: 200px;
-  color: gray;
-}
-
-.SearchResults {
-  z-index:2;
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  border: 2px solid green;
-  width: 600px;
-}
-
-.hidden {
-  visibility: hidden;
-}
-
-.SearchResults ul{
-  padding-left: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.SearchResults li{
-  list-style: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 580px;
-}
-
-.SearchResults li:hover{
-  background-color: aqua;
-  color: black;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
