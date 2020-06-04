@@ -58,13 +58,6 @@ class SearchResults extends React.PureComponent{
     }
   }
 
-  componentDidMount() {
-    Mousetrap.bind("esc", () => this.searchRef.current.select(), 'keyup');
-  }
-
-  componentWillUnmount() {
-    Mousetrap.unbind("esc");
-  }
   render(){
     const {results, keywords} = this.props;
 
@@ -72,7 +65,7 @@ class SearchResults extends React.PureComponent{
       <div className="SearchResults">
         <ul>
           {results.map((v, i) =>
-            <li key={i} verseNum={v.index}>{v.book} {v.chapter}:{v.verse}</li>
+            <li key={i} versenum={v.index} title={v.text}>{v.book} {v.chapter}:{v.verse} {v.text}</li>
           )}
         </ul>
       </div>
@@ -88,7 +81,8 @@ class Page extends React.PureComponent{
       verseNums: [randomVerseNum()],
       versesBefore: 1,
       versesAfter: 1,
-      results: []
+      results: [],
+      searchFocused: false,
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleContextChange = this.handleContextChange.bind(this);
@@ -112,7 +106,7 @@ class Page extends React.PureComponent{
     var verses = [];
     if(searches.length > 0){
       verses = filter(bible, {'book':searches[0][1], 'chapter':parseInt(searches[0][2]), 'verse':parseInt(searches[0][3])});
-    } else {
+    } else if(text.length>0){
       verses = filter(bible, v=>v.text.toLowerCase().includes(text.toLowerCase()));
     }
       // this.setState({verseNums: [...this.state.verseNums, verse]});
@@ -121,24 +115,29 @@ class Page extends React.PureComponent{
 
   componentDidMount() {
     Mousetrap.bind("shift shift", () => this.searchRef.current.select(), 'keyup');
+    Mousetrap.bind('esc', () => this.searchRef.current.blur(), 'keyup');
+
   }
 
   componentWillUnmount() {
     Mousetrap.unbind("shift shift");
+    Mousetrap.unbind("esc");
   }
 
   render(){
-    const {searchText, verseNums, versesBefore, versesAfter, results} = this.state;
+    const {searchText, verseNums, versesBefore, versesAfter, results, searchFocused} = this.state;
+    const searchId = "searchId"
+
     return (
       <div className="App">
         <div className="Settings">
-        <input className="Search" name="search" type="text" placeholder='Search...' value={searchText} 
-          onChange={this.handleSearchChange} ref={this.searchRef}/>
-          <SearchResults results={results}/>
+        <input id={searchId} className="Search" name="search" type="text" placeholder='Search...' value={searchText} 
+          onChange={this.handleSearchChange} ref={this.searchRef} />
+          {searchId === document.activeElement.id && results.length > 0?<SearchResults results={results}/>:null}
         <span className="ContextSetting">
           Context:
           <select value={this.state.versesBefore} onChange={this.handleContextChange}>
-            {range(1, 10).map((n) =>
+            {range(0, 10).map((n) =>
               <option value={n} key={n}>{n}</option>
             )}
           </select>
