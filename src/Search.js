@@ -90,7 +90,10 @@ class Search extends React.PureComponent {
           ref={this.searchRef}
         />
         {searchId === document.activeElement.id && results.length > 0 ? (
-          <ReactVirtualizedList rows={results} rowRenderer={rowRenderer} />
+          <span>
+            <span>{`Results: ${results.length}`}</span>
+            <ReactVirtualizedList rows={results} rowRenderer={rowRenderer} />
+          </span>
         ) : null}
       </div>
     );
