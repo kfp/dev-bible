@@ -86,8 +86,8 @@ class Page extends React.PureComponent {
 
     return (
       <div className="App">
+        <Search bible={bible}/>
         <div className="Settings">
-          <Search bible={bible} />
           <span className="ContextSetting">
             Context:
             <select
@@ -102,7 +102,7 @@ class Page extends React.PureComponent {
             </select>
           </span>
         </div>
-        <Tabs>
+        <Tabs className={"Tabs"}>
           <TabList>
             {verseNums.map((verseNum, i) => (
               <Tab

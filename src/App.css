@@ -1,7 +1,10 @@
+Body{
+  background-color: #282c34;
+}
+
 .App {
   /* text-align: center; */
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   /* align-items: center;
@@ -28,6 +31,17 @@
   margin-left: 10px;
 }
 
+.Settings{
+  position: absolute;
+  right: 0;
+  margin-top: 50px;
+}
+
+.Tabs{
+  position: absolute;
+  margin-top: 50px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -41,7 +55,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;

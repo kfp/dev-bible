@@ -11,7 +11,8 @@ class Search extends React.PureComponent {
     this.state = {
       searchText: "",
       results: [],
-      selectedIndex: 0
+      selectedIndex: 0,
+      displaySearch: false
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.searchRef = React.createRef();
@@ -44,6 +45,7 @@ class Search extends React.PureComponent {
       () => {
         this.searchRef.current.select();
         this.doSearch(this.state.searchText);
+        this.setState({ displaySearch: true });
       },
       "keyup"
     );
@@ -52,6 +54,7 @@ class Search extends React.PureComponent {
       () => {
         this.setState({ results: [] });
         this.searchRef.current.blur();
+        this.setState({ displaySearch: false });
       },
       "keyup"
     );
@@ -64,7 +67,7 @@ class Search extends React.PureComponent {
         }
         return false;
       },
-      "keyup"
+      "keydown"
     );
     Mousetrap.bindGlobal(
       "down",
@@ -75,7 +78,7 @@ class Search extends React.PureComponent {
         }
         return false;
       },
-      "keyup"
+      "keydown"
     );
     Mousetrap.bindGlobal("enter", (e) => {
       console.log("Chose: " + this.state.results[this.state.selectedIndex].text);
@@ -96,17 +99,17 @@ class Search extends React.PureComponent {
     const searchId = "searchId";
 
     return (
-      <div>
+      <div className="SearchArea">
         <input
           id={searchId}
-          className="Search"
           name="search"
           type="text"
-          placeholder="Search..."
+          placeholder="Search... (Shift Shift)"
           value={searchText}
           onChange={this.handleSearchChange}
           ref={this.searchRef}
         />
+        &nbsp;
         {results.length > 0 ? (
           <span>
             <span>{`Results: ${results.length}`}</span>
