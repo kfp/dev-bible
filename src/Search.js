@@ -15,12 +15,18 @@ class Search extends React.PureComponent {
       displaySearch: false
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleSearchFocus = this.handleSearchFocus.bind(this);
     this.searchRef = React.createRef();
   }
 
   handleSearchChange(event) {
     this.setState({ searchText: event.target.value });
     this.doSearch(event.target.value);
+  }
+
+  handleSearchFocus() {
+    const { searchText } = this.state;
+    this.doSearch(searchText);
   }
 
   doSearch(text) {
@@ -44,7 +50,6 @@ class Search extends React.PureComponent {
       "shift shift",
       () => {
         this.searchRef.current.select();
-        this.doSearch(this.state.searchText);
         this.setState({ displaySearch: true });
       },
       "keyup"
@@ -107,6 +112,7 @@ class Search extends React.PureComponent {
           placeholder="Search... (Shift Shift)"
           value={searchText}
           onChange={this.handleSearchChange}
+          onFocus={this.handleSearchFocus}
           ref={this.searchRef}
         />
         &nbsp;
