@@ -1,9 +1,10 @@
 import React from "react";
-import { range, rangeRight } from "lodash";
+import { range, rangeRight, uniq, indexOf, max, min } from "lodash";
 import "./App.css";
 import Search from "./Search.js";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
+import Mousetrap from "mousetrap";
 
 var index = 0;
 const books = require("./books.json");
@@ -15,7 +16,7 @@ const bible = require("./t_kjv.json").resultset.row.map((v) => {
     chapter: v.field[2],
     verse: v.field[3],
     text: v.field[4],
-    tokenized: tokenize(v.field[4]),
+    tokenized: tokenize(v.field[4])
   };
 });
 
@@ -25,6 +26,10 @@ function randomVerseNum() {
 
 function tokenize(text) {
   return text;
+}
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
 }
 
 class Verse extends React.PureComponent {
@@ -53,10 +58,7 @@ class VerseGroup extends React.PureComponent {
           <Verse verse={bible[n]} isContext={true} key={i} />
         ))}
         <Verse verse={verse} />
-        {rangeRight(
-          Math.min(bible.length, verseNum + versesAfter),
-          verseNum
-        ).map((n, i) => (
+        {rangeRight(Math.min(bible.length, verseNum + versesAfter), verseNum).map((n, i) => (
           <Verse verse={bible[n]} isContext={true} key={i} />
         ))}
       </div>
@@ -71,29 +73,54 @@ class Page extends React.PureComponent {
       verseNums: [randomVerseNum()],
       versesBefore: 1,
       versesAfter: 1,
+      tabIndex: 0
     };
     this.handleContextChange = this.handleContextChange.bind(this);
+    this.addVerse = this.addVerse.bind(this);
+  }
+
+  addVerse(verseNum) {
+    this.setState({ verseNums: uniq([...this.state.verseNums, verseNum]) });
+    this.setState({ tabIndex: indexOf(this.state.verseNums, verseNum) });
   }
 
   handleContextChange(event) {
     const newVal = parseInt(event.target.value);
-    this.setState({ versesBefore: newVal });
-    this.setState({ versesAfter: newVal });
+    this.setState({ versesBefore: newVal, versesAfter: newVal });
+  }
+
+  componentDidMount() {
+    Mousetrap.bind(
+      "ctrl+right",
+      (e) => {
+        this.setState({ tabIndex: (this.state.tabIndex + 1) % this.state.verseNums.length });
+      },
+      "keydown"
+    );
+    Mousetrap.bind(
+      "ctrl+left",
+      (e) => {
+        this.setState({ tabIndex: mod(this.state.tabIndex - 1, this.state.verseNums.length) });
+      },
+      "keydown"
+    );
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind("ctrl+right");
+    Mousetrap.unbind("ctrl+left");
   }
 
   render() {
-    const { verseNums, versesBefore, versesAfter } = this.state;
+    const { verseNums, versesBefore, versesAfter, tabIndex } = this.state;
 
     return (
       <div className="App">
-        <Search bible={bible}/>
+        <Search bible={bible} addVerse={this.addVerse} />
         <div className="Settings">
           <span className="ContextSetting">
             Context:
-            <select
-              value={this.state.versesBefore}
-              onChange={this.handleContextChange}
-            >
+            <select value={this.state.versesBefore} onChange={this.handleContextChange}>
               {range(0, 10).map((n) => (
                 <option value={n} key={n}>
                   {n}
@@ -102,22 +129,15 @@ class Page extends React.PureComponent {
             </select>
           </span>
         </div>
-        <Tabs className={"Tabs"}>
+        <Tabs className={"Tabs"} selectedIndex={tabIndex} onSelect={(tabIndex) => this.setState({ tabIndex })}>
           <TabList>
             {verseNums.map((verseNum, i) => (
-              <Tab
-                key={i}
-              >{`${bible[verseNum].book} ${bible[verseNum].chapter}:${bible[verseNum].verse}`}</Tab>
+              <Tab key={i}>{`${bible[verseNum].book} ${bible[verseNum].chapter}:${bible[verseNum].verse}`}</Tab>
             ))}
           </TabList>
           {verseNums.map((verseNum, i) => (
             <TabPanel key={i}>
-              <VerseGroup
-                versesBefore={versesBefore}
-                versesAfter={versesAfter}
-                verseNum={verseNum}
-                key={i}
-              />
+              <VerseGroup versesBefore={versesBefore} versesAfter={versesAfter} verseNum={verseNum} key={i} />
             </TabPanel>
           ))}
         </Tabs>

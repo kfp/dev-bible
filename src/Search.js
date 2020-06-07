@@ -1,5 +1,5 @@
 import React from "react";
-import { filter, take } from "lodash";
+import { filter } from "lodash";
 import "./Search.css";
 import Mousetrap from "mousetrap";
 import "mousetrap/plugins/global-bind/mousetrap-global-bind";
@@ -86,7 +86,12 @@ class Search extends React.PureComponent {
       "keydown"
     );
     Mousetrap.bindGlobal("enter", (e) => {
-      console.log("Chose: " + this.state.results[this.state.selectedIndex].text);
+      const verse = this.state.results[this.state.selectedIndex];
+      console.log("Chose: " + verse.text);
+      this.props.addVerse(verse.index);
+      this.setState({ results: [] });
+      this.searchRef.current.blur();
+      this.setState({ displaySearch: false });
     });
     //TODO: page down/up nagivation
   }
