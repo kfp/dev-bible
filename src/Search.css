@@ -1,0 +1,19 @@
+.SearchArea Input{
+    width: 400px;
+    color: gray;
+    margin-left: 15px;
+    margin-top: 0px;
+    padding-top: 0px;
+  }
+  
+  .hidden {
+    visibility: hidden;
+  }
+.SearchArea{
+  border: 1px solid white;
+  width: 1600px;
+  background-color: #282c34;
+  position: relative;
+  z-index: 2;
+  margin: 0px auto;
+}  

@@ -1,7 +1,10 @@
+Body{
+  background-color: #282c34;
+}
+
 .App {
   /* text-align: center; */
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   /* align-items: center;
@@ -9,6 +12,7 @@
   font-size: calc(10px + 2vmin);
   color: white;
   padding: 20px;
+  z-index: 1;
 }
 
 .Verse {
@@ -27,9 +31,15 @@
   margin-left: 10px;
 }
 
-.Search {
-  width: 200px;
-  color: gray;
+.Settings{
+  position: absolute;
+  right: 0;
+  margin-top: 50px;
+}
+
+.Tabs{
+  position: absolute;
+  margin-top: 50px;
 }
 
 .App-logo {
@@ -45,7 +55,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
