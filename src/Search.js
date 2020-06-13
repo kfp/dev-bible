@@ -45,6 +45,10 @@ class Search extends React.PureComponent {
     this.setState({ results: verses, selectedIndex: 0 });
   }
 
+  addToIndex(num) {
+    return Math.max(Math.min(this.state.selectedIndex + num, this.state.results.length - 1), 0);
+  }
+
   componentDidMount() {
     Mousetrap.bind(
       "shift shift",
@@ -67,9 +71,7 @@ class Search extends React.PureComponent {
       "up",
       (e) => {
         this.searchRef.current.blur();
-        if (this.state.selectedIndex > 0) {
-          this.setState({ selectedIndex: this.state.selectedIndex - 1 });
-        }
+        this.setState({ selectedIndex: this.addToIndex(-1) });
         return false;
       },
       "keydown"
@@ -78,9 +80,25 @@ class Search extends React.PureComponent {
       "down",
       (e) => {
         this.searchRef.current.blur();
-        if (this.state.selectedIndex < this.state.results.length - 1) {
-          this.setState({ selectedIndex: this.state.selectedIndex + 1 });
-        }
+        this.setState({ selectedIndex: this.addToIndex(1) });
+        return false;
+      },
+      "keydown"
+    );
+    Mousetrap.bindGlobal(
+      "pagedown",
+      (e) => {
+        this.searchRef.current.blur();
+        this.setState({ selectedIndex: this.addToIndex(9) });
+        return false;
+      },
+      "keydown"
+    );
+    Mousetrap.bindGlobal(
+      "pageup",
+      (e) => {
+        this.searchRef.current.blur();
+        this.setState({ selectedIndex: this.addToIndex(-9) });
         return false;
       },
       "keydown"
@@ -101,6 +119,8 @@ class Search extends React.PureComponent {
     Mousetrap.unbind("esc");
     Mousetrap.unbind("up");
     Mousetrap.unbind("down");
+    Mousetrap.unbind("pageUp");
+    Mousetrap.unbind("pageDown");
     Mousetrap.unbind("enter");
   }
 
