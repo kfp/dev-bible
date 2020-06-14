@@ -4,6 +4,9 @@ import "./Search.css";
 import Mousetrap from "mousetrap";
 import "mousetrap/plugins/global-bind/mousetrap-global-bind";
 import SearchResultsList from "./SearchResultsList.js";
+const bcv_parser = require("bible-passage-reference-parser/js/en_bcv_parser").bcv_parser;
+const bcv = new bcv_parser();
+bcv.set_options({ osis_compaction_strategy: "bvc" });
 
 class Search extends React.PureComponent {
   constructor(props) {
@@ -29,20 +32,21 @@ class Search extends React.PureComponent {
     this.doSearch(searchText);
   }
 
-  doSearch(text) {
+  doSearch(text, refSearch) {
     const { bible } = this.props;
-    const searches = [...text.matchAll(/((?:\d\s*)?\w+)\s+(\d+):(\d+(?:-\d+)?)\s*/g)];
-    var verses = [];
-    if (searches.length > 0) {
-      verses = filter(bible, {
-        book: searches[0][1],
-        chapter: parseInt(searches[0][2]),
-        verse: parseInt(searches[0][3])
-      });
+
+    if (refSearch) {
+      var searches = bcv.parse(text).osis();
+      if (searches) {
+        console.log(searches);
+        searches.split(",").forEach((search) => this.props.addVerse(search));
+        return;
+      }
     } else if (text.length > 0) {
+      var verses = [];
       verses = filter(bible, (v) => v.text.toLowerCase().includes(text.toLowerCase()));
+      this.setState({ results: verses, selectedIndex: 0 });
     }
-    this.setState({ results: verses, selectedIndex: 0 });
   }
 
   addToIndex(num) {
@@ -105,13 +109,16 @@ class Search extends React.PureComponent {
     );
     Mousetrap.bindGlobal("enter", (e) => {
       const verse = this.state.results[this.state.selectedIndex];
-      console.log("Chose: " + verse.text);
-      this.props.addVerse(verse.index);
+      if (!verse) {
+        this.doSearch(this.state.searchText, true);
+        this.searchRef.current.blur();
+        return;
+      }
+      this.props.addVerse(bcv.parse(`${verse.book} ${verse.chapter}: ${verse.verse}`).osis());
       this.setState({ results: [] });
       this.searchRef.current.blur();
       this.setState({ displaySearch: false });
     });
-    //TODO: page down/up nagivation
   }
 
   componentWillUnmount() {
