@@ -24,7 +24,9 @@ const bible = require("./t_kjv.json").resultset.row.map((v) => {
 });
 
 function randomVerseNum() {
-  return "John.3.16";
+  const verse = bible[Math.floor(Math.random() * bible.length)];
+
+  return `${verse.bookAbbrev}.${verse.chapter}.${verse.verse}`;
 }
 
 function tokenize(text) {
@@ -69,9 +71,6 @@ class VerseGroup extends React.PureComponent {
 
     return (
       <div>
-        <h1>
-          {verses[0].book} {verses[0].chapter}:{verses[0].verse}
-        </h1>
         {verses.map((verse, i) => (
           <Verse verse={verse} key={i} />
         ))}
@@ -140,7 +139,7 @@ class Page extends React.PureComponent {
         <Tabs className={"Tabs"} selectedIndex={tabIndex} onSelect={(tabIndex) => this.setState({ tabIndex })}>
           <TabList>
             {verseRefs.map((verseRef, i) => {
-              return <Tab key={i}>{bcv.parse(verseRef).osis()}</Tab>;
+              return <Tab key={i}>{bcv.parse(verseRef).osis().replace('.', ' ').replace('.', ':')}</Tab>;
             })}
           </TabList>
           {verseRefs.map((verseRef, i) => (

@@ -141,6 +141,7 @@ class Search extends React.PureComponent {
           id={searchId}
           name="search"
           type="text"
+          className={(bcv.parse(searchText).osis())?"RefMatch":null}
           placeholder="Search... (Shift Shift)"
           value={searchText}
           onChange={this.handleSearchChange}
