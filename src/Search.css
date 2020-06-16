@@ -17,7 +17,7 @@
   border: 1px solid white;
   width: 1600px;
   background-color: #282c34;
-  position: relative;
+  position: absolute;
   z-index: 2;
   margin: 0px auto;
 }  

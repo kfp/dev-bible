@@ -1,0 +1,16 @@
+.Shortcuts{
+    column-count: 3;
+    column-gap: 10px;
+    z-index: 5;
+    position: relative;
+    margin: 0px auto;
+    width: 1200px;
+    text-align: left;
+    background-color: #282c34;
+    border: 2px dashed;
+    padding: 10px;
+    top: 50px
+}
+.Keys{
+    border: 1px solid;
+}

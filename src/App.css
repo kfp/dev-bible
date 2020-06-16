@@ -15,6 +15,20 @@ Body{
   z-index: 1;
 }
 
+.ShortcutLink{
+  right: 20px;
+  position: absolute;
+  cursor: pointer;
+  z-index: 3;
+  background-color: white;
+  color: black;
+  height: 25px;
+  width: 25px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
 .Verse {
   font-size: small;
 }

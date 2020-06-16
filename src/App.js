@@ -2,6 +2,7 @@ import React from "react";
 import { reject, find, uniq, indexOf, max } from "lodash";
 import "./App.css";
 import Search from "./Search.js";
+import Shortcuts from "./Shortcuts.js";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import Mousetrap from "mousetrap";
@@ -86,7 +87,8 @@ class Page extends React.PureComponent {
       verseRefs: [randomVerseNum()],
       versesBefore: 1,
       versesAfter: 1,
-      tabIndex: 0
+      tabIndex: 0,
+      showShortcuts: false
     };
     this.addVerse = this.addVerse.bind(this);
   }
@@ -122,6 +124,13 @@ class Page extends React.PureComponent {
       },
       "keypress"
     );
+    Mousetrap.bind(
+      "f1",
+      () => {
+        this.setState({ showShortcuts: !this.state.showShortcuts});
+      },
+      "keydown"
+    );
   }
 
   componentWillUnmount() {
@@ -131,15 +140,17 @@ class Page extends React.PureComponent {
   }
 
   render() {
-    const { verseRefs, versesBefore, versesAfter, tabIndex } = this.state;
+    const { verseRefs, tabIndex, showShortcuts } = this.state;
 
     return (
       <div className="App">
+        {showShortcuts ? <Shortcuts /> : null}
         <Search bible={bible} addVerse={this.addVerse} />
+        <span className="ShortcutLink" onClick={()=>this.setState({ showShortcuts: !this.state.showShortcuts})} title="Toggle Shortcuts">?</span>
         <Tabs className={"Tabs"} selectedIndex={tabIndex} onSelect={(tabIndex) => this.setState({ tabIndex })}>
           <TabList>
             {verseRefs.map((verseRef, i) => {
-              return <Tab key={i}>{bcv.parse(verseRef).osis().replace('.', ' ').replace('.', ':')}</Tab>;
+              return <Tab key={i}>{bcv.parse(verseRef).osis().replace(".", " ").replace(".", ":")}</Tab>;
             })}
           </TabList>
           {verseRefs.map((verseRef, i) => (
