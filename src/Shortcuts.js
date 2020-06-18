@@ -14,7 +14,8 @@ class Shortcuts extends React.PureComponent {
             <div><span className="Keys">Down</span> - Select next search result</div>
             <div><span className="Keys">Up</span> - Select previous search result</div>
             <div><span className="Keys">PageDown</span> - Select next search result page</div>
-            <div><span className="Keys">Up</span> - Select previous search result page</div>
+            <div><span className="Keys">PageUp</span> - Select previous search result page</div>
+            <div><a className="App-link" href="https://github.com/kfp/dev-bible" target="new">src</a></div>
         </div>);
     }
 }
