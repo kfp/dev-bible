@@ -136,7 +136,7 @@ class Search extends React.PureComponent {
     const searchId = "searchId";
 
     return (
-      <div className="SearchArea">
+      <span className="SearchArea">
         <input
           id={searchId}
           name="search"
@@ -155,7 +155,7 @@ class Search extends React.PureComponent {
             <SearchResultsList rows={results} selectedIndex={selectedIndex} />
           </span>
         ) : null}
-      </div>
+      </span>
     );
   }
 }

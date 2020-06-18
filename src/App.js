@@ -145,8 +145,10 @@ class Page extends React.PureComponent {
     return (
       <div className="App">
         {showShortcuts ? <Shortcuts /> : null}
+        <div>
         <Search bible={bible} addVerse={this.addVerse} />
         <span className="ShortcutLink" onClick={()=>this.setState({ showShortcuts: !this.state.showShortcuts})} title="Toggle Shortcuts">?</span>
+        </div>
         <Tabs className={"Tabs"} selectedIndex={tabIndex} onSelect={(tabIndex) => this.setState({ tabIndex })}>
           <TabList>
             {verseRefs.map((verseRef, i) => {

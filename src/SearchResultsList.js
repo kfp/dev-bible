@@ -4,6 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { List } from "react-virtualized";
 import "./SearchResultsList.css";
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,14 +50,18 @@ class SearchResultsList extends React.PureComponent {
     return (
       <ThemeProvider theme={darkTheme}>
         <div className={classes.root}>
+        <AutoSizer disableHeight>
+              {({width}) => (
           <List
             height={400}
-            width={1600}
+            width={width}
             rowHeight={45}
             rowCount={rows.length}
             scrollToIndex={selectedIndex}
             rowRenderer={this.rowRenderer}
           />
+          )}
+          </AutoSizer>
         </div>
       </ThemeProvider>
     );
