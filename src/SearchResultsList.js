@@ -35,7 +35,7 @@ class SearchResultsList extends React.PureComponent {
     const v = rows[index];
 
     return (
-      <ListItem key={key} style={style} key={index} selected={selectedIndex == index}>
+      <ListItem key={key} style={style} selected={selectedIndex === index}>
         <ListItemText>
           <span className={"searchResult"}>{`${v.book} ${v.chapter}:${v.verse}`}</span> {v.text}
         </ListItemText>
