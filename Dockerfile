@@ -2,7 +2,7 @@ FROM node:latest
 
 RUN yarn set version berry
 
-# RUN mkdir /src
+RUN mkdir /app
 COPY yarn.lock package.json .yarnrc.yml /app
 COPY src /app/src
 COPY public /app/public
